@@ -1,0 +1,238 @@
+{
+  "info": {
+    "name": "Events Platform API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Full API collection for the Events Platform backend."
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000" },
+    { "key": "access_token", "value": "" },
+    { "key": "refresh_token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Signup (Seeker)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/signup/", "host": ["{{base_url}}"], "path": ["auth", "signup", ""] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"seeker@example.com\",\n  \"password\": \"StrongP@ss1\",\n  \"role\": \"seeker\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Signup (Facilitator)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/signup/", "host": ["{{base_url}}"], "path": ["auth", "signup", ""] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"facilitator@example.com\",\n  \"password\": \"StrongP@ss1\",\n  \"role\": \"facilitator\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Verify Email",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/verify-email/", "host": ["{{base_url}}"], "path": ["auth", "verify-email", ""] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"seeker@example.com\",\n  \"otp\": \"123456\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Resend OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/resend-otp/", "host": ["{{base_url}}"], "path": ["auth", "resend-otp", ""] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"seeker@example.com\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.access) { pm.collectionVariables.set('access_token', json.access); }",
+                  "if (json.refresh) { pm.collectionVariables.set('refresh_token', json.refresh); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/login/", "host": ["{{base_url}}"], "path": ["auth", "login", ""] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"seeker@example.com\",\n  \"password\": \"StrongP@ss1\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.access) { pm.collectionVariables.set('access_token', json.access); }",
+                  "if (json.refresh) { pm.collectionVariables.set('refresh_token', json.refresh); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/refresh/", "host": ["{{base_url}}"], "path": ["auth", "refresh", ""] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Events (Seeker)",
+      "item": [
+        {
+          "name": "Search Events",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/events/search/?q=&location=&language=&starts_after=&starts_before=&page=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "events", "search", ""],
+              "query": [
+                { "key": "q", "value": "" },
+                { "key": "location", "value": "" },
+                { "key": "language", "value": "" },
+                { "key": "starts_after", "value": "" },
+                { "key": "starts_before", "value": "" },
+                { "key": "page", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Enroll in Event",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/api/enrollments/enroll/", "host": ["{{base_url}}"], "path": ["api", "enrollments", "enroll", ""] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event_id\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Cancel Enrollment",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": { "raw": "{{base_url}}/api/enrollments/1/cancel/", "host": ["{{base_url}}"], "path": ["api", "enrollments", "1", "cancel", ""] }
+          }
+        },
+        {
+          "name": "Upcoming Enrollments",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": { "raw": "{{base_url}}/api/enrollments/upcoming/", "host": ["{{base_url}}"], "path": ["api", "enrollments", "upcoming", ""] }
+          }
+        },
+        {
+          "name": "Past Enrollments",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": { "raw": "{{base_url}}/api/enrollments/past/", "host": ["{{base_url}}"], "path": ["api", "enrollments", "past", ""] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Events (Facilitator)",
+      "item": [
+        {
+          "name": "Create Event",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/api/facilitator/events/", "host": ["{{base_url}}"], "path": ["api", "facilitator", "events", ""] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Django Workshop\",\n  \"description\": \"Learn Django REST Framework\",\n  \"language\": \"English\",\n  \"location\": \"Online\",\n  \"starts_at\": \"2026-05-01T10:00:00Z\",\n  \"ends_at\": \"2026-05-01T12:00:00Z\",\n  \"capacity\": 50\n}"
+            }
+          }
+        },
+        {
+          "name": "List My Events",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": { "raw": "{{base_url}}/api/facilitator/events/", "host": ["{{base_url}}"], "path": ["api", "facilitator", "events", ""] }
+          }
+        },
+        {
+          "name": "Get Event Detail",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": { "raw": "{{base_url}}/api/facilitator/events/1/", "host": ["{{base_url}}"], "path": ["api", "facilitator", "events", "1", ""] }
+          }
+        },
+        {
+          "name": "Update Event (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/api/facilitator/events/1/", "host": ["{{base_url}}"], "path": ["api", "facilitator", "events", "1", ""] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Workshop Title\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Event",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": { "raw": "{{base_url}}/api/facilitator/events/1/", "host": ["{{base_url}}"], "path": ["api", "facilitator", "events", "1", ""] }
+          }
+        }
+      ]
+    }
+  ]
+}
